@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-genieconnect-dev-205944-authRole",
+      "UnauthRoleArn": "arn:aws:iam::596284238491:role/amplify-genieconnect-dev-205944-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::596284238491:role/amplify-genieconnect-dev-205944-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-genieconnect-dev-205944-deployment",
+      "UnauthRoleName": "amplify-genieconnect-dev-205944-unauthRole",
+      "StackName": "amplify-genieconnect-dev-205944",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:596284238491:stack/amplify-genieconnect-dev-205944/42220d90-99f4-11eb-bb2f-02d72f98ea5c",
+      "AmplifyAppId": "dwc133m2qw3ev"
+    }
+  }
+}
