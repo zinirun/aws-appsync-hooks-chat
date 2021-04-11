@@ -10,6 +10,11 @@
       "StackName": "amplify-genieconnect-dev-205944",
       "StackId": "arn:aws:cloudformation:ap-northeast-2:596284238491:stack/amplify-genieconnect-dev-205944/42220d90-99f4-11eb-bb2f-02d72f98ea5c",
       "AmplifyAppId": "dwc133m2qw3ev"
+    },
+    "categories": {
+      "auth": {
+        "genieconnectbc7bb65e": {}
+      }
     }
   }
 }
