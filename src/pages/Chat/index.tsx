@@ -19,7 +19,15 @@ export default function ChatPage() {
   return (
     <div>
       <GenieChat
-        messages={MESSAGES}
+        messages={MESSAGES.map((m) => ({
+          id: m.id,
+          text: m.content,
+          user: {
+            id: m.owner,
+            name: m.owner,
+          },
+          createdAt: new Date(),
+        }))}
         onSend={onSend}
         user={{
           id: "me",
