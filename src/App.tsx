@@ -1,13 +1,13 @@
 import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
-import Rooms from "./Rooms";
-import Chat from "./Chat";
+import ChatPage from "./pages/Chat";
+import RoomsPage from "./pages/Room";
 
 export default function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/room/:roomId" component={Chat} />
-        <Route path="/" component={Rooms} />
+        <Route path="/room/:roomId" component={ChatPage} />
+        <Route path="/" component={RoomsPage} />
       </Switch>
     </Router>
   );
