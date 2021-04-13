@@ -11,7 +11,7 @@ const MESSAGES = [
   },
 ];
 
-export default function ChatPage() {
+export default function ChatPage({ match, username }: any) {
   const onSend = (message: string) => {
     console.log(message);
   };
@@ -33,21 +33,6 @@ export default function ChatPage() {
           id: "me",
         }}
       />
-      {/* <GiftedChat
-        messages={MESSAGES.map((m) => ({
-          id: m.id,
-          text: m.content,
-          user: {
-            id: m.owner,
-            name: m.owner,
-          },
-          createdAt: new Date(),
-        }))}
-        onSend={(messages: any) => onSend(messages)}
-        user={{
-          id: "me",
-        }}
-      /> */}
     </div>
   );
 }
