@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/react-hooks";
 import {
   Button,
   List,
@@ -5,7 +6,9 @@ import {
   ListItem,
   ListItemText,
 } from "@material-ui/core";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { LIST_ROOMS } from "../../graphql/queries";
 
 const ROOMS = [
   { id: "Christmas Room 🎄", createdAt: new Date().toDateString() },
@@ -13,6 +16,14 @@ const ROOMS = [
 ];
 
 export default function RoomsPage() {
+  const { data, loading, error } = useQuery(LIST_ROOMS);
+
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+    }
+  }, [data]);
+
   return (
     <List
       subheader={<ListSubheader component="div">List of rooms</ListSubheader>}
