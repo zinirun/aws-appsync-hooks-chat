@@ -1,4 +1,8 @@
+import { useQuery } from "@apollo/client";
+import { useEffect, useState } from "react";
 import GenieChat from "../../components/GenieChat";
+import { GET_ROOM_MESSAGES } from "../../graphql/queries";
+import { withUser } from "../../helpers/withUser";
 
 const MESSAGES = [
   { id: 2, content: "That's it. That's all there is.", owner: "me" },
@@ -11,7 +15,20 @@ const MESSAGES = [
   },
 ];
 
-export default function ChatPage({ match, username }: any) {
+export default withUser(function ChatPage({ match, username }: any) {
+  const { data, error, loading, refetch } = useQuery(GET_ROOM_MESSAGES, {
+    variables: {
+      roomId: match.params.roomId,
+    },
+  });
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (data) {
+      setMessages(data.getRoom.messages.items);
+    }
+  }, [data]);
+
   const onSend = (message: string) => {
     console.log(message);
   };
@@ -35,4 +52,4 @@ export default function ChatPage({ match, username }: any) {
       />
     </div>
   );
-}
+});
