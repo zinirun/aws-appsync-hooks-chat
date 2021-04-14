@@ -1,13 +1,10 @@
 import { AUTH_TYPE } from "aws-appsync";
 import Amplify, { Auth } from "aws-amplify";
-import {
-  ApolloClient,
-  createHttpLink,
-  InMemoryCache,
-} from "@apollo/react-hooks";
+import { ApolloClient, InMemoryCache } from "@apollo/react-hooks";
 import AppSyncConfig from "../aws-exports";
 import { ApolloLink } from "apollo-link";
 import { createAuthLink } from "aws-appsync-auth-link";
+import { createSubscriptionHandshakeLink } from "aws-appsync-subscription-link";
 
 Amplify.configure(AppSyncConfig);
 
@@ -19,9 +16,10 @@ const auth = {
   jwtToken: async () =>
     (await Auth.currentSession()).getAccessToken().getJwtToken(),
 };
+
 const link = ApolloLink.from([
   createAuthLink({ url, region, auth }) as any,
-  createHttpLink({ uri: url, credentials: "same-origin" }),
+  createSubscriptionHandshakeLink({ url, region, auth }),
 ]);
 
 export const client = new ApolloClient({
