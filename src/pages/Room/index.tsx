@@ -7,21 +7,17 @@ import {
   ListItemText,
   Fab,
 } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LIST_ROOMS } from "../../graphql/queries";
 import { CREATE_ROOM } from "../../graphql/mutations";
 import AddIcon from "@material-ui/icons/Add";
 import { v4 as uuidv4 } from "uuid";
-
-const ROOMS = [
-  { id: "Christmas Room 🎄", createdAt: new Date().toDateString() },
-  { id: "Room for cool people 🔥", createdAt: new Date().toDateString() },
-];
+import { CREATE_ROOMS_SUB } from "../../graphql/subscriptions";
 
 export default function RoomsPage() {
   const [rooms, setRooms]: any = useState([]);
-  const { data, loading, error, refetch } = useQuery(LIST_ROOMS);
+  const { data, refetch, subscribeToMore, ...results } = useQuery(LIST_ROOMS);
   const [createRoom] = useMutation(CREATE_ROOM);
 
   useEffect(() => {
@@ -29,6 +25,32 @@ export default function RoomsPage() {
       setRooms(data.listRooms.items);
     }
   }, [data]);
+
+  const subscribeToNewRooms = useCallback(() => {
+    subscribeToMore({
+      document: CREATE_ROOMS_SUB,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newRoom = subscriptionData.data.onCreateRoom;
+        console.log(prev);
+        return Object.assign({}, prev, {
+          listRooms: {
+            ...prev.listRooms,
+            items: [
+              newRoom,
+              ...prev.listRooms.items.filter(
+                (item: any) => item.id !== newRoom.id
+              ),
+            ],
+          },
+        });
+      },
+    });
+  }, [subscribeToMore]);
+
+  useEffect(() => {
+    subscribeToNewRooms();
+  }, [subscribeToNewRooms]);
 
   const handleAddClick = () => {
     createRoom({
