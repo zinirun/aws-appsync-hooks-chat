@@ -11,8 +11,15 @@ export const CREATE_ROOM = gql`
 `;
 
 export const CREATE_MESSAGE = gql`
-  mutation createMessage($roomId: ID!, $when: String!, $content: String!) {
-    createMessage(input: { roomId: $roomId, when: $when, content: $content }) {
+  mutation createMessage(
+    $roomId: ID!
+    $when: String!
+    $content: String!
+    $owner: String!
+  ) {
+    createMessage(
+      input: { roomId: $roomId, when: $when, content: $content, owner: $owner }
+    ) {
       __typename
       id
       when
