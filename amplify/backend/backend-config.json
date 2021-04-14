@@ -19,7 +19,15 @@
               "userPoolId": "authgenieconnectbc7bb65e"
             }
           },
-          "additionalAuthenticationProviders": []
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "API_KEY",
+              "apiKeyConfig": {
+                "apiKeyExpirationDays": 365,
+                "description": ""
+              }
+            }
+          ]
         }
       }
     }

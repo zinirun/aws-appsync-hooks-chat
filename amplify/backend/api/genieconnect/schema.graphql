@@ -1,8 +1,11 @@
 type Room
+  @aws_api_key
+  @aws_cognito_user_pools
   @model(subscriptions: null)
   @auth(
     rules: [
       { allow: owner, ownerField: "owner", mutations: [create, update, delete] }
+      { allow: public, provider: apiKey, operations: [read] }
     ]
   ) {
   id: ID!
@@ -13,10 +16,13 @@ type Room
 }
 
 type Message
+  @aws_api_key
+  @aws_cognito_user_pools
   @model(subscriptions: null)
   @auth(
     rules: [
       { allow: owner, ownerField: "owner", mutations: [create, update, delete] }
+      { allow: public, provider: apiKey, operations: [read] }
     ]
   ) {
   id: ID!
