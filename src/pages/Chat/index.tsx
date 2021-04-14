@@ -1,26 +1,21 @@
-import { useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import { useCallback, useEffect, useState } from "react";
 import GenieChat from "../../components/GenieChat";
+import { CREATE_MESSAGE } from "../../graphql/mutations";
 import { GET_ROOM_MESSAGES } from "../../graphql/queries";
+import { CREATE_MESSAGES_SUB } from "../../graphql/subscriptions";
 import { withUser } from "../../helpers/withUser";
 
-const MESSAGES = [
-  { id: 2, content: "That's it. That's all there is.", owner: "me" },
-  { id: 1, content: "Six by nine. Forty two.", owner: "me" },
-  {
-    id: 0,
-    content:
-      "What's the angle of the red light that refracts through a water surface to create a 🌈?",
-    owner: "anonymous",
-  },
-];
-
 export default withUser(function ChatPage({ match, username }: any) {
-  const { data, error, loading, refetch } = useQuery(GET_ROOM_MESSAGES, {
-    variables: {
-      roomId: match.params.roomId,
-    },
-  });
+  const { data, subscribeToMore, refetch, ...results } = useQuery(
+    GET_ROOM_MESSAGES,
+    {
+      variables: {
+        roomId: match.params.roomId,
+      },
+    }
+  );
+  const [createMessage] = useMutation(CREATE_MESSAGE);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -29,21 +24,64 @@ export default withUser(function ChatPage({ match, username }: any) {
     }
   }, [data]);
 
-  const onSend = (message: string) => {
-    console.log(message);
+  const subscribeToNewMessages = useCallback(() => {
+    subscribeToMore({
+      document: CREATE_MESSAGES_SUB,
+      variables: {
+        roomId: match.params.roomId,
+      },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newMessage = subscriptionData.data.onCreateMessage;
+        return Object.assign({}, prev, {
+          getRoom: {
+            ...prev.getRoom,
+            messages: {
+              ...prev.getRoom.messages,
+              items: [
+                newMessage,
+                ...prev.getRoom.messages.items.filter(
+                  (item: any) => item.id !== newMessage.id
+                ),
+              ],
+            },
+          },
+        });
+      },
+    });
+  }, [match.params.roomId, subscribeToMore]);
+
+  useEffect(() => {
+    subscribeToNewMessages();
+  }, [subscribeToNewMessages]);
+
+  const onSend = (message: any) => {
+    createMessage({
+      variables: {
+        content: message.text,
+        roomId: match.params.roomId,
+        owner: username,
+        when: new Date(),
+      },
+      update: (cache, { data: { createMessage } }) => {
+        refetch();
+      },
+    });
   };
+
+  console.log(messages);
 
   return (
     <div>
       <GenieChat
-        messages={MESSAGES.map((m) => ({
+        messages={messages.map((m: any) => ({
           id: m.id,
           text: m.content,
           user: {
             id: m.owner,
             name: m.owner,
           },
-          createdAt: new Date(),
+          createdAt: m.when,
         }))}
         onSend={onSend}
         user={{
