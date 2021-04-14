@@ -12,3 +12,13 @@ export const CREATE_MESSAGES_SUB = gql`
     }
   }
 `;
+
+export const CREATE_ROOMS_SUB = gql`
+  subscription OnCreateRoom {
+    onCreateRoom {
+      __typename
+      id
+      createdAt
+    }
+  }
+`;

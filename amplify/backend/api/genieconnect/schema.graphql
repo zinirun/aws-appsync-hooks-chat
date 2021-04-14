@@ -1,4 +1,10 @@
-type Room @model {
+type Room
+  @model(subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, ownerField: "owner", mutations: [create, update, delete] }
+    ]
+  ) {
   id: ID!
   createdAt: String
   updatedAt: String
@@ -6,7 +12,13 @@ type Room @model {
     @connection(name: "RoomMessages", keyField: "roomId", sortField: "when")
 }
 
-type Message @model(subscriptions: null) {
+type Message
+  @model(subscriptions: null)
+  @auth(
+    rules: [
+      { allow: owner, ownerField: "owner", mutations: [create, update, delete] }
+    ]
+  ) {
   id: ID!
   content: String!
   when: String!
@@ -18,4 +30,5 @@ type Message @model(subscriptions: null) {
 type Subscription {
   onCreateMessage(roomId: ID!): Message
     @aws_subscribe(mutations: ["createMessage"])
+  onCreateRoom: Room @aws_subscribe(mutations: ["createRoom"])
 }
