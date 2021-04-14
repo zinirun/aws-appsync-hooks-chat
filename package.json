@@ -19,6 +19,7 @@
     "aws-appsync": "^4.0.3",
     "aws-appsync-auth-link": "^3.0.4",
     "aws-appsync-react": "^4.0.3",
+    "aws-appsync-subscription-link": "^3.0.6",
     "graphql-tag": "^2.11.0",
     "moment": "^2.29.1",
     "react": "^17.0.2",
