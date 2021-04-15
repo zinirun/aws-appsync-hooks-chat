@@ -1,10 +1,11 @@
 import gql from "graphql-tag";
 
 export const CREATE_ROOM = gql`
-  mutation CreateRoom($id: ID!) {
-    createRoom(input: { id: $id }) {
+  mutation CreateRoom($id: ID!, $owner: String!) {
+    createRoom(input: { id: $id, owner: $owner }) {
       __typename
       id
+      owner
       createdAt
     }
   }

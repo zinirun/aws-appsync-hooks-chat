@@ -14,8 +14,9 @@ import { CREATE_ROOM } from "../../graphql/mutations";
 import AddIcon from "@material-ui/icons/Add";
 import { v4 as uuidv4 } from "uuid";
 import { CREATE_ROOMS_SUB } from "../../graphql/subscriptions";
+import { withUser } from "../../helpers/withUser";
 
-export default function RoomsPage() {
+export default withUser(function RoomsPage({ username }: any) {
   const [rooms, setRooms]: any = useState([]);
   const { data, refetch, subscribeToMore, ...results } = useQuery(LIST_ROOMS);
   const [createRoom] = useMutation(CREATE_ROOM);
@@ -56,6 +57,7 @@ export default function RoomsPage() {
     createRoom({
       variables: {
         id: uuidv4(),
+        owner: username,
       },
     })
       .then(() => {
@@ -94,4 +96,4 @@ export default function RoomsPage() {
       </List>
     </>
   );
-}
+});
