@@ -24,7 +24,7 @@ export default withUser(function ChatPage({ match, username }: any) {
     }
   }, [data]);
 
-  const subscribeToNewMessages = useCallback(() => {
+  useEffect(() => {
     subscribeToMore({
       document: CREATE_MESSAGES_SUB,
       variables: {
@@ -50,10 +50,6 @@ export default withUser(function ChatPage({ match, username }: any) {
       },
     });
   }, [match.params.roomId, subscribeToMore]);
-
-  useEffect(() => {
-    subscribeToNewMessages();
-  }, [subscribeToNewMessages]);
 
   const onSend = (message: any) => {
     createMessage({

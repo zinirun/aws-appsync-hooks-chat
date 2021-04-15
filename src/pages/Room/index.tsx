@@ -7,7 +7,7 @@ import {
   ListItemText,
   Fab,
 } from "@material-ui/core";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { LIST_ROOMS } from "../../graphql/queries";
 import { CREATE_ROOM } from "../../graphql/mutations";
@@ -27,13 +27,12 @@ export default withUser(function RoomsPage({ username }: any) {
     }
   }, [data]);
 
-  const subscribeToNewRooms = useCallback(() => {
+  useEffect(() => {
     subscribeToMore({
       document: CREATE_ROOMS_SUB,
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const newRoom = subscriptionData.data.onCreateRoom;
-        console.log(prev);
         return Object.assign({}, prev, {
           listRooms: {
             ...prev.listRooms,
@@ -48,10 +47,6 @@ export default withUser(function RoomsPage({ username }: any) {
       },
     });
   }, [subscribeToMore]);
-
-  useEffect(() => {
-    subscribeToNewRooms();
-  }, [subscribeToNewRooms]);
 
   const handleAddClick = () => {
     createRoom({
@@ -89,7 +84,10 @@ export default withUser(function RoomsPage({ username }: any) {
               component={Link}
               to={`/room/${room.id}`}
             >
-              <ListItemText primary={room.id} secondary={room.createdAt} />
+              <ListItemText
+                primary={room.id}
+                secondary={`${room.owner}/${room.createdAt}`}
+              />
             </Button>
           </ListItem>
         ))}
