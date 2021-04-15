@@ -6,6 +6,7 @@ export const LIST_ROOMS = gql`
       items {
         __typename
         id
+        owner
         createdAt
       }
     }
