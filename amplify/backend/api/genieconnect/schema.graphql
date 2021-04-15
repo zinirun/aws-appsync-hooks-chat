@@ -11,6 +11,7 @@ type Room
   id: ID!
   createdAt: String
   updatedAt: String
+  owner: String
   messages: [Message]
     @connection(name: "RoomMessages", keyField: "roomId", sortField: "when")
 }
