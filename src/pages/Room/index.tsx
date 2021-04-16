@@ -21,6 +21,8 @@ export default withUser(function RoomsPage({ username }: any) {
   const { data, refetch, subscribeToMore, ...results } = useQuery(LIST_ROOMS);
   const [createRoom] = useMutation(CREATE_ROOM);
 
+  // useSubscription
+
   useEffect(() => {
     if (data) {
       setRooms(data.listRooms.items);
@@ -45,6 +47,7 @@ export default withUser(function RoomsPage({ username }: any) {
           },
         });
       },
+      onError: (err) => console.error(err),
     });
   }, [subscribeToMore]);
 

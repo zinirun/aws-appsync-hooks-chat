@@ -48,6 +48,7 @@ export default withUser(function ChatPage({ match, username }: any) {
           },
         });
       },
+      onError: (err) => console.error(err),
     });
   }, [match.params.roomId, subscribeToMore]);
 
