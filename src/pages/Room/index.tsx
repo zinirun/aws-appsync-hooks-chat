@@ -60,7 +60,7 @@ export default withUser(function RoomsPage({ username }: any) {
         refetch();
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   };
 
