@@ -66,8 +66,6 @@ export default withUser(function ChatPage({ match, username }: any) {
     });
   };
 
-  console.log(messages);
-
   return (
     <div>
       <GenieChat
