@@ -1,5 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useCallback, useEffect, useState } from "react";
+import { useSubscription } from "@apollo/react-hooks";
+import { useEffect, useState } from "react";
 import GenieChat from "../../components/GenieChat";
 import { CREATE_MESSAGE } from "../../graphql/mutations";
 import { GET_ROOM_MESSAGES } from "../../graphql/queries";
@@ -7,11 +8,12 @@ import { CREATE_MESSAGES_SUB } from "../../graphql/subscriptions";
 import { withUser } from "../../helpers/withUser";
 
 export default withUser(function ChatPage({ match, username }: any) {
+  const { roomId } = match.params;
   const { data, subscribeToMore, refetch, ...results } = useQuery(
     GET_ROOM_MESSAGES,
     {
       variables: {
-        roomId: match.params.roomId,
+        roomId,
       },
     }
   );
@@ -25,38 +27,68 @@ export default withUser(function ChatPage({ match, username }: any) {
   }, [data]);
 
   useEffect(() => {
-    subscribeToMore({
-      document: CREATE_MESSAGES_SUB,
-      variables: {
-        roomId: match.params.roomId,
-      },
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newMessage = subscriptionData.data.onCreateMessage;
-        return Object.assign({}, prev, {
-          getRoom: {
-            ...prev.getRoom,
-            messages: {
-              ...prev.getRoom.messages,
-              items: [
-                newMessage,
-                ...prev.getRoom.messages.items.filter(
-                  (item: any) => item.id !== newMessage.id
-                ),
-              ],
+    if (roomId && subscribeToMore) {
+      const unsubscribe = subscribeToMore({
+        document: CREATE_MESSAGES_SUB,
+        variables: {
+          roomId,
+        },
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          const newMessage = subscriptionData.data.onCreateMessage;
+          return Object.assign({}, prev, {
+            getRoom: {
+              ...prev.getRoom,
+              messages: {
+                ...prev.getRoom.messages,
+                items: [
+                  newMessage,
+                  ...prev.getRoom.messages.items.filter(
+                    (item: any) => item.id !== newMessage.id
+                  ),
+                ],
+              },
             },
-          },
-        });
-      },
-      onError: (err) => console.error(err),
-    });
-  }, [match.params.roomId, subscribeToMore]);
+          });
+        },
+        onError: () => {
+          console.log("reconnect. . .");
+          subscribeToMore({
+            document: CREATE_MESSAGES_SUB,
+            variables: {
+              roomId,
+            },
+            updateQuery: (prev, { subscriptionData }) => {
+              if (!subscriptionData.data) return prev;
+              const newMessage = subscriptionData.data.onCreateMessage;
+              return Object.assign({}, prev, {
+                getRoom: {
+                  ...prev.getRoom,
+                  messages: {
+                    ...prev.getRoom.messages,
+                    items: [
+                      newMessage,
+                      ...prev.getRoom.messages.items.filter(
+                        (item: any) => item.id !== newMessage.id
+                      ),
+                    ],
+                  },
+                },
+              });
+            },
+          });
+        },
+      });
+
+      return () => unsubscribe();
+    }
+  }, [roomId, subscribeToMore]);
 
   const onSend = (message: any) => {
     createMessage({
       variables: {
         content: message.text,
-        roomId: match.params.roomId,
+        roomId,
         owner: username,
         when: new Date(),
       },

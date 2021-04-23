@@ -28,25 +28,29 @@ export default withUser(function RoomsPage({ username }: any) {
   }, [data]);
 
   useEffect(() => {
-    subscribeToMore({
-      document: CREATE_ROOMS_SUB,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newRoom = subscriptionData.data.onCreateRoom;
-        return Object.assign({}, prev, {
-          listRooms: {
-            ...prev.listRooms,
-            items: [
-              newRoom,
-              ...prev.listRooms.items.filter(
-                (item: any) => item.id !== newRoom.id
-              ),
-            ],
-          },
-        });
-      },
-      onError: (err) => console.error(err),
-    });
+    if (subscribeToMore) {
+      const unsubscribe = subscribeToMore({
+        document: CREATE_ROOMS_SUB,
+        updateQuery: (prev, { subscriptionData }) => {
+          if (!subscriptionData.data) return prev;
+          const newRoom = subscriptionData.data.onCreateRoom;
+          return Object.assign({}, prev, {
+            listRooms: {
+              ...prev.listRooms,
+              items: [
+                newRoom,
+                ...prev.listRooms.items.filter(
+                  (item: any) => item.id !== newRoom.id
+                ),
+              ],
+            },
+          });
+        },
+        onError: (err) => console.error(err),
+      });
+
+      return () => unsubscribe();
+    }
   }, [subscribeToMore]);
 
   const handleAddClick = () => {
