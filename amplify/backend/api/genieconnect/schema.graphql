@@ -1,5 +1,5 @@
 type Room
-  @aws_api_key
+  # @aws_api_key
   @aws_cognito_user_pools
   @model(subscriptions: null)
   @auth(
@@ -17,7 +17,7 @@ type Room
 }
 
 type Message
-  @aws_api_key
+  # @aws_api_key
   @aws_cognito_user_pools
   @model(subscriptions: null)
   @auth(
