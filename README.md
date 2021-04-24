@@ -1,6 +1,6 @@
 # aws-appsync-hooks-chat
 <p align="center">
-    <span>Realtime chat app with AWS AppSync and Apollo Hooks</span>
+    Realtime chat app with AWS AppSync and Apollo Hooks<br />
     <img src=".github/preview.png" width="350" style="margin-top:20px;border-radius:10px">
 </p>
 
