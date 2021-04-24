@@ -89,7 +89,7 @@ export default withUser(function RoomsPage({ username }: any) {
   };
 
   return (
-    <>
+    <div style={{ height: "100vh", overflow: "auto" }}>
       <Fab
         color="primary"
         aria-label="Add"
@@ -117,6 +117,6 @@ export default withUser(function RoomsPage({ username }: any) {
           </ListItem>
         ))}
       </List>
-    </>
+    </div>
   );
 });
