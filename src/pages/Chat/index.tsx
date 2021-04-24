@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useSubscription } from "@apollo/react-hooks";
 import { useEffect, useState } from "react";
 import GenieChat from "../../components/GenieChat";
 import { CREATE_MESSAGE } from "../../graphql/mutations";
@@ -9,14 +8,11 @@ import { withUser } from "../../helpers/withUser";
 
 export default withUser(function ChatPage({ match, username }: any) {
   const { roomId } = match.params;
-  const { data, subscribeToMore, refetch, ...results } = useQuery(
-    GET_ROOM_MESSAGES,
-    {
-      variables: {
-        roomId,
-      },
-    }
-  );
+  const { data, subscribeToMore, refetch } = useQuery(GET_ROOM_MESSAGES, {
+    variables: {
+      roomId,
+    },
+  });
   const [createMessage] = useMutation(CREATE_MESSAGE);
   const [messages, setMessages] = useState([]);
 
@@ -52,7 +48,7 @@ export default withUser(function ChatPage({ match, username }: any) {
           });
         },
         onError: () => {
-          console.log("reconnect. . .");
+          console.log("reconnect . . .");
           subscribeToMore({
             document: CREATE_MESSAGES_SUB,
             variables: {
@@ -99,7 +95,7 @@ export default withUser(function ChatPage({ match, username }: any) {
   };
 
   return (
-    <div>
+    <div style={{ height: "100vh", overflow: "hidden" }}>
       <GenieChat
         messages={messages.map((m: any) => ({
           id: m.id,
@@ -111,9 +107,7 @@ export default withUser(function ChatPage({ match, username }: any) {
           createdAt: m.when,
         }))}
         onSend={onSend}
-        user={{
-          id: "me",
-        }}
+        user={username}
       />
     </div>
   );

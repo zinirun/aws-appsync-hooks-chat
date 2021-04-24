@@ -18,7 +18,7 @@ import { withUser } from "../../helpers/withUser";
 
 export default withUser(function RoomsPage({ username }: any) {
   const [rooms, setRooms]: any = useState([]);
-  const { data, refetch, subscribeToMore, ...results } = useQuery(LIST_ROOMS);
+  const { data, refetch, subscribeToMore } = useQuery(LIST_ROOMS);
   const [createRoom] = useMutation(CREATE_ROOM);
 
   useEffect(() => {
@@ -46,7 +46,27 @@ export default withUser(function RoomsPage({ username }: any) {
             },
           });
         },
-        onError: (err) => console.error(err),
+        onError: (err) => {
+          console.log("reconnect . . .");
+          subscribeToMore({
+            document: CREATE_ROOMS_SUB,
+            updateQuery: (prev, { subscriptionData }) => {
+              if (!subscriptionData.data) return prev;
+              const newRoom = subscriptionData.data.onCreateRoom;
+              return Object.assign({}, prev, {
+                listRooms: {
+                  ...prev.listRooms,
+                  items: [
+                    newRoom,
+                    ...prev.listRooms.items.filter(
+                      (item: any) => item.id !== newRoom.id
+                    ),
+                  ],
+                },
+              });
+            },
+          });
+        },
       });
 
       return () => unsubscribe();
@@ -73,7 +93,7 @@ export default withUser(function RoomsPage({ username }: any) {
       <Fab
         color="primary"
         aria-label="Add"
-        style={{ position: "absolute", bottom: 10, right: 10 }}
+        style={{ position: "absolute", bottom: 10, right: 10, zIndex: 999 }}
         onClick={handleAddClick}
       >
         <AddIcon />
