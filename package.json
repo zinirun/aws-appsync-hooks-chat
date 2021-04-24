@@ -1,5 +1,5 @@
 {
-  "name": "genie-connect",
+  "name": "aws-appsync-hooks-chat",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
